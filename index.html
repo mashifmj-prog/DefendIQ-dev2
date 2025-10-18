@@ -165,30 +165,624 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: var(--background);
+        background: #121212;
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         z-index: 9999;
-        color: var(--text);
+        color: #e0e0e0;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     ">
-        <div style="font-size: 3rem; margin-bottom: 20px;">🛡️</div>
-        <h2 style="margin-bottom: 10px;">DefendIQ Enterprise</h2>
-        <p>Loading application...</p>
-        <div style="margin-top: 20px; width: 200px; height: 4px; background: var(--surface); border-radius: 2px;">
-            <div id="loadingProgress" style="height: 100%; background: var(--primary); border-radius: 2px; width: 0%; transition: width 0.3s;"></div>
+        <div style="font-size: 4rem; margin-bottom: 20px;">🛡️</div>
+        <h2 style="margin-bottom: 10px; color: #2e7d32;">DefendIQ Enterprise</h2>
+        <p style="margin-bottom: 30px; color: #9e9e9e;">Loading application...</p>
+        <div style="width: 200px; height: 4px; background: #1e1e1e; border-radius: 2px;">
+            <div id="loadingProgress" style="height: 100%; background: #2e7d32; border-radius: 2px; width: 0%; transition: width 0.3s;"></div>
         </div>
+        <div id="loadingStatus" style="margin-top: 15px; font-size: 0.9rem; color: #9e9e9e;">Initializing...</div>
     </div>
 
-    <!-- Scripts in correct order -->
-    <script src="debug.js"></script>
-    <script src="departments.js"></script>
-    <script src="state.js"></script>
-    <script src="canvas.js"></script>
-    <script src="quiz.js"></script>
-    <script src="api.js"></script>
-    <script src="ui.js"></script>
-    <script src="script.js"></script>
+    <!-- Scripts - All in one file to avoid loading order issues -->
+    <script>
+        // Combined application script to avoid loading dependencies
+        console.log('🚀 Starting DefendIQ Enterprise...');
+
+        // Update loading status
+        function updateLoadingStatus(message, percent) {
+            const status = document.getElementById('loadingStatus');
+            const progress = document.getElementById('loadingProgress');
+            if (status) status.textContent = message;
+            if (progress) progress.style.width = percent + '%';
+            console.log(`📦 ${message} (${percent}%)`);
+        }
+
+        // Simple debug system
+        const debug = {
+            log: (msg, data) => {
+                console.log(`[DEBUG] ${msg}`, data || '');
+            },
+            error: (msg, err) => {
+                console.error(`[ERROR] ${msg}`, err || '');
+            }
+        };
+
+        // Departments data - defined first
+        const departments = {
+            nms: {
+                id: 'nms',
+                name: 'NMS Command Center',
+                description: 'Network Infrastructure Protection & Vendor Security',
+                color: '#2196f3',
+                icon: '🌐',
+                modules: [
+                    {
+                        id: 'nms-1',
+                        title: 'Network Infrastructure Security',
+                        icon: '🔒',
+                        description: 'Protecting network systems and configurations from social engineering attacks',
+                        difficulty: 'Advanced',
+                        estimatedTime: '45 min',
+                        objectives: [
+                            'Identify social engineering tactics targeting NMS teams',
+                            'Implement secure network change procedures',
+                            'Protect network configuration data',
+                            'Establish vendor security protocols'
+                        ],
+                        content: {
+                            materials: [
+                                {
+                                    title: 'Understanding NMS Vulnerabilities',
+                                    content: 'Network Management Systems are prime targets for attackers seeking infrastructure access.'
+                                }
+                            ],
+                            quiz: [
+                                {
+                                    question: 'A vendor emails requesting emergency network configuration changes. What should you do first?',
+                                    options: [
+                                        'Implement the changes immediately',
+                                        'Verify the request through established secure channels',
+                                        'Forward to your manager',
+                                        'Ignore the request'
+                                    ],
+                                    correct: 1,
+                                    explanation: 'Always verify emergency requests through established secure communication channels before implementation.'
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            hr: {
+                id: 'hr',
+                name: 'HR Guardian Hub',
+                description: 'Data Privacy, Compliance & Employee Protection',
+                color: '#9c27b0',
+                icon: '👥',
+                modules: [
+                    {
+                        id: 'hr-1',
+                        title: 'Employee Data Protection',
+                        icon: '📊',
+                        description: 'Safeguarding sensitive employee information and ensuring POPIA compliance',
+                        difficulty: 'Intermediate',
+                        estimatedTime: '40 min',
+                        objectives: [
+                            'Understand POPIA requirements',
+                            'Implement secure data handling',
+                            'Protect employee privacy',
+                            'Establish access controls'
+                        ],
+                        content: {
+                            materials: [
+                                {
+                                    title: 'POPIA Compliance Essentials',
+                                    content: 'Understanding the Protection of Personal Information Act requirements.'
+                                }
+                            ],
+                            quiz: [
+                                {
+                                    question: 'Under POPIA, employee consent for data processing must be:',
+                                    options: [
+                                        'Optional',
+                                        'Implied',
+                                        'Specific and informed',
+                                        'Verbal only'
+                                    ],
+                                    correct: 2,
+                                    explanation: 'POPIA requires specific, informed consent for personal data processing.'
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            it: {
+                id: 'it',
+                name: 'IT Cyber Station',
+                description: 'System Defense & Incident Response',
+                color: '#f44336',
+                icon: '💻',
+                modules: [
+                    {
+                        id: 'it-1',
+                        title: 'Privilege Access Management',
+                        icon: '🔑',
+                        description: 'Managing administrative access and preventing privilege escalation',
+                        difficulty: 'Advanced',
+                        estimatedTime: '50 min',
+                        objectives: [
+                            'Implement least privilege principle',
+                            'Monitor administrative access',
+                            'Prevent privilege escalation',
+                            'Manage service accounts'
+                        ],
+                        content: {
+                            materials: [
+                                {
+                                    title: 'Principle of Least Privilege',
+                                    content: 'Granting only the minimum access necessary for job functions.'
+                                }
+                            ],
+                            quiz: [
+                                {
+                                    question: 'The principle of least privilege means:',
+                                    options: [
+                                        'Grant all access by default',
+                                        'Grant minimum necessary access',
+                                        'No access for anyone',
+                                        'Access based on seniority'
+                                    ],
+                                    correct: 1,
+                                    explanation: 'Users should have only the access necessary to perform their job functions.'
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        };
+
+        updateLoadingStatus('Departments loaded', 25);
+
+        // Department AI configurations
+        const departmentAI = {
+            nms: {
+                greetings: ["Welcome to the NMS Command Center! Ready to strengthen our network defenses?"],
+                expertise: ["network infrastructure", "vendor security", "social engineering"],
+                responses: {
+                    'social engineering': "Social engineering attacks often target NMS teams for network access. Always verify unusual requests through multiple channels."
+                }
+            },
+            hr: {
+                greetings: ["Welcome to HR Guardian Hub! Let's protect our most valuable asset - our people."],
+                expertise: ["data privacy", "POPIA compliance", "employee protection"],
+                responses: {
+                    'POPIA': "The Protection of Personal Information Act requires specific consent and secure data handling practices."
+                }
+            },
+            it: {
+                greetings: ["Welcome to IT Cyber Station! Let's fortify our digital defenses."],
+                expertise: ["system security", "access control", "incident response"],
+                responses: {
+                    'privilege escalation': "Implement strict access controls and monitor for unusual privilege elevation attempts."
+                }
+            }
+        };
+
+        // State management
+        const state = {
+            appState: null,
+
+            getDefaultState() {
+                return {
+                    currentDepartment: null,
+                    currentMode: 'training',
+                    userProfile: {
+                        name: '',
+                        employeeId: '',
+                        department: '',
+                        role: '',
+                        knowledgeLevel: 'beginner'
+                    },
+                    departmentProgress: {
+                        nms: this.createDepartmentState('nms'),
+                        hr: this.createDepartmentState('hr'),
+                        it: this.createDepartmentState('it')
+                    },
+                    chatHistory: [],
+                    lastActivity: new Date().toISOString()
+                };
+            },
+
+            createDepartmentState(departmentId) {
+                const deptModules = departments[departmentId]?.modules || [];
+                return {
+                    departmentId: departmentId,
+                    modules: deptModules.map(module => ({
+                        id: module.id,
+                        completed: false,
+                        progress: 0,
+                        quizScore: 0
+                    })),
+                    overallScore: 0,
+                    completedModules: 0
+                };
+            },
+
+            loadState() {
+                try {
+                    const savedState = localStorage.getItem('defendIQEnterprise');
+                    if (savedState) {
+                        this.appState = JSON.parse(savedState);
+                    } else {
+                        this.appState = this.getDefaultState();
+                    }
+                } catch (error) {
+                    this.appState = this.getDefaultState();
+                }
+            },
+
+            saveState() {
+                if (this.appState) {
+                    try {
+                        localStorage.setItem('defendIQEnterprise', JSON.stringify(this.appState));
+                    } catch (error) {
+                        console.error('Save failed:', error);
+                    }
+                }
+            },
+
+            setCurrentDepartment(departmentId) {
+                if (this.appState) {
+                    this.appState.currentDepartment = departmentId;
+                    this.saveState();
+                }
+            },
+
+            getCurrentDepartment() {
+                return this.appState?.currentDepartment || null;
+            },
+
+            getDepartmentState(departmentId) {
+                return this.appState?.departmentProgress[departmentId] || this.createDepartmentState(departmentId);
+            }
+        };
+
+        updateLoadingStatus('State management ready', 50);
+
+        // UI management
+        const ui = {
+            init() {
+                updateLoadingStatus('Initializing UI...', 60);
+                this.setupEventListeners();
+                this.showDepartmentSelection();
+                updateLoadingStatus('UI ready', 80);
+            },
+
+            showDepartmentSelection() {
+                const overlay = document.getElementById('departmentSelection');
+                const appContainer = document.getElementById('appContainer');
+                
+                if (overlay && appContainer) {
+                    overlay.style.display = 'flex';
+                    appContainer.style.display = 'none';
+                    
+                    document.querySelectorAll('.department-card').forEach(card => {
+                        card.addEventListener('click', () => {
+                            const department = card.dataset.department;
+                            this.selectDepartment(department);
+                        });
+                    });
+                }
+            },
+
+            selectDepartment(departmentId) {
+                state.setCurrentDepartment(departmentId);
+                
+                const overlay = document.getElementById('departmentSelection');
+                const appContainer = document.getElementById('appContainer');
+                
+                if (overlay && appContainer) {
+                    overlay.style.display = 'none';
+                    appContainer.style.display = 'block';
+                    this.updateDepartmentUI();
+                    this.showTrainingMode();
+                }
+            },
+
+            updateDepartmentUI() {
+                const departmentId = state.getCurrentDepartment();
+                const department = departments[departmentId];
+                
+                if (department) {
+                    const deptTitle = document.getElementById('deptTitle');
+                    const deptDescription = document.getElementById('deptDescription');
+                    
+                    if (deptTitle) deptTitle.textContent = department.name;
+                    if (deptDescription) deptDescription.textContent = department.description;
+                    
+                    this.loadDepartmentModules();
+                }
+            },
+
+            loadDepartmentModules() {
+                const departmentId = state.getCurrentDepartment();
+                const department = departments[departmentId];
+                const moduleGrid = document.getElementById('moduleGrid');
+                
+                if (moduleGrid && department) {
+                    moduleGrid.innerHTML = '';
+                    
+                    department.modules.forEach(module => {
+                        const moduleCard = this.createModuleCard(module, departmentId);
+                        moduleGrid.appendChild(moduleCard);
+                    });
+                }
+            },
+
+            createModuleCard(module, departmentId) {
+                const deptState = state.getDepartmentState(departmentId);
+                const moduleProgress = deptState.modules.find(m => m.id === module.id) || { progress: 0, completed: false };
+                
+                const card = document.createElement('div');
+                card.className = `module-card ${moduleProgress.completed ? 'completed' : ''}`;
+                card.innerHTML = `
+                    <div class="module-header-card">
+                        <div class="module-icon">${module.icon}</div>
+                        <div>
+                            <h3>${module.title}</h3>
+                            <div class="module-meta">
+                                <span>${module.difficulty}</span>
+                                <span>${module.estimatedTime}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="module-description">${module.description}</p>
+                    <div class="module-progress">
+                        <div class="progress-text">
+                            <span>Progress</span>
+                            <span>${moduleProgress.progress}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${moduleProgress.progress}%"></div>
+                        </div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => {
+                    this.openModule(module, departmentId);
+                });
+                
+                return card;
+            },
+
+            openModule(module, departmentId) {
+                const moduleContent = document.getElementById('moduleContent');
+                const moduleTitle = document.getElementById('moduleTitle');
+                const moduleBody = document.getElementById('moduleBody');
+                
+                if (moduleContent && moduleTitle && moduleBody) {
+                    moduleTitle.textContent = module.title;
+                    moduleBody.innerHTML = this.createModuleContent(module, departmentId);
+                    
+                    document.getElementById('moduleGrid').style.display = 'none';
+                    moduleContent.style.display = 'block';
+                }
+            },
+
+            createModuleContent(module, departmentId) {
+                return `
+                    <div class="module-overview">
+                        <h3>Learning Objectives</h3>
+                        <ul class="objectives-list">
+                            ${module.objectives.map(obj => `<li>${obj}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="learning-materials">
+                        <h3>Learning Materials</h3>
+                        ${module.content.materials.map(material => `
+                            <div class="material-item">
+                                <h4>${material.title}</h4>
+                                <p>${material.content}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="quiz-section">
+                        <h3>Knowledge Check</h3>
+                        <p>Test your understanding with this quick quiz.</p>
+                        <button class="btn btn-primary" onclick="quiz.startQuiz('${departmentId}', '${module.id}')">
+                            Start Quiz
+                        </button>
+                    </div>
+                `;
+            },
+
+            showTrainingMode() {
+                const trainingMode = document.getElementById('trainingMode');
+                const supportMode = document.getElementById('supportMode');
+                
+                if (trainingMode && supportMode) {
+                    trainingMode.style.display = 'block';
+                    supportMode.style.display = 'none';
+                }
+            },
+
+            setupEventListeners() {
+                // Department switch
+                const departmentSwitch = document.getElementById('departmentSwitch');
+                if (departmentSwitch) {
+                    departmentSwitch.addEventListener('click', () => this.showDepartmentSelection());
+                }
+
+                // Close module
+                const closeModule = document.getElementById('closeModule');
+                if (closeModule) {
+                    closeModule.addEventListener('click', () => this.closeModuleView());
+                }
+
+                // Mode tabs
+                const trainingTab = document.getElementById('trainingTab');
+                const supportTab = document.getElementById('supportTab');
+                
+                if (trainingTab) {
+                    trainingTab.addEventListener('click', () => this.showTrainingMode());
+                }
+            },
+
+            closeModuleView() {
+                const moduleContent = document.getElementById('moduleContent');
+                const moduleGrid = document.getElementById('moduleGrid');
+                
+                if (moduleContent && moduleGrid) {
+                    moduleContent.style.display = 'none';
+                    moduleGrid.style.display = 'grid';
+                }
+            },
+
+            showNotification(message, type = 'info') {
+                console.log(`[NOTIFICATION ${type}]: ${message}`);
+            }
+        };
+
+        updateLoadingStatus('UI components loaded', 90);
+
+        // Simple quiz system
+        const quiz = {
+            startQuiz(departmentId, moduleId) {
+                const department = departments[departmentId];
+                const module = department.modules.find(m => m.id === moduleId);
+                
+                if (module && module.content.quiz) {
+                    const firstQuestion = module.content.quiz[0];
+                    const moduleBody = document.getElementById('moduleBody');
+                    
+                    if (moduleBody) {
+                        moduleBody.innerHTML = `
+                            <div class="quiz-container">
+                                <h3>Quiz: ${module.title}</h3>
+                                <div class="quiz-question">
+                                    <h4>${firstQuestion.question}</h4>
+                                    <div class="quiz-options">
+                                        ${firstQuestion.options.map((option, index) => `
+                                            <button class="quiz-option" onclick="quiz.answerQuestion(${index}, ${firstQuestion.correct}, '${departmentId}', '${moduleId}')">
+                                                ${option}
+                                            </button>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            },
+
+            answerQuestion(selectedIndex, correctIndex, departmentId, moduleId) {
+                const isCorrect = selectedIndex === correctIndex;
+                const moduleBody = document.getElementById('moduleBody');
+                
+                if (moduleBody) {
+                    if (isCorrect) {
+                        moduleBody.innerHTML = `
+                            <div class="quiz-results">
+                                <h3>✅ Correct!</h3>
+                                <p>Well done! You've completed this module.</p>
+                                <button class="btn btn-primary" onclick="ui.closeModuleView()">
+                                    Return to Modules
+                                </button>
+                            </div>
+                        `;
+                        
+                        // Update progress
+                        const deptState = state.getDepartmentState(departmentId);
+                        const module = deptState.modules.find(m => m.id === moduleId);
+                        if (module) {
+                            module.completed = true;
+                            module.progress = 100;
+                            state.saveState();
+                        }
+                    } else {
+                        moduleBody.innerHTML = `
+                            <div class="quiz-results">
+                                <h3>❌ Incorrect</h3>
+                                <p>Better luck next time! Review the material and try again.</p>
+                                <button class="btn btn-secondary" onclick="quiz.startQuiz('${departmentId}', '${moduleId}')">
+                                    Try Again
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
+            }
+        };
+
+        updateLoadingStatus('All systems ready', 95);
+
+        // API system
+        const api = {
+            generateAIResponse(message) {
+                return "I'm your DefendIQ assistant. I'm here to help you with cybersecurity questions and guidance.";
+            }
+        };
+
+        // Canvas system
+        const canvas = {
+            init() {
+                const canvas = document.getElementById('backgroundCanvas');
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                    
+                    // Simple background
+                    ctx.fillStyle = '#121212';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+        };
+
+        // Initialize everything when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            updateLoadingStatus('Starting application...', 100);
+            
+            try {
+                // Load state first
+                state.loadState();
+                
+                // Initialize canvas
+                canvas.init();
+                
+                // Initialize UI
+                ui.init();
+                
+                // Hide loading indicator after a delay
+                setTimeout(() => {
+                    const loadingIndicator = document.getElementById('loadingIndicator');
+                    if (loadingIndicator) {
+                        loadingIndicator.style.display = 'none';
+                    }
+                    console.log('🎯 DefendIQ Enterprise ready!');
+                }, 500);
+                
+            } catch (error) {
+                console.error('Initialization failed:', error);
+                updateLoadingStatus('Initialization failed - check console', 100);
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const canvas = document.getElementById('backgroundCanvas');
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#121212';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+        });
+
+        console.log('📦 All application components compiled successfully');
+    </script>
 </body>
 </html>

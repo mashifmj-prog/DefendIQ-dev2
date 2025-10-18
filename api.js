@@ -35,13 +35,16 @@ const api = {
                 state.updateUserProfile({ knowledgeLevel: 'intermediate' });
             }
         }
+
+        // Get current time-based greeting
+        const currentGreeting = ui.getTimeBasedGreeting();
         
         // Generate personalized response
         let response = '';
         
         // Greeting responses
         if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
-            response = `Hello! I'm your DefendIQ assistant. I see you're interested in ${mentionedAreas.length > 0 ? mentionedAreas.join(' and ') : 'cybersecurity'}. How can I help you today?`;
+            response = `${currentGreeting}! I'm your DefendIQ assistant. I see you're interested in ${mentionedAreas.length > 0 ? mentionedAreas.join(' and ') : 'cybersecurity'}. How can I help you today?`;
         }
         // Question about specific topics
         else if (lowerMessage.includes('what') || lowerMessage.includes('how') || lowerMessage.includes('explain')) {
@@ -69,13 +72,28 @@ const api = {
         else if (lowerMessage.includes('help') || lowerMessage.includes('recommend') || lowerMessage.includes('suggest')) {
             response = this.generateModuleRecommendation();
         }
+        // Time-specific responses
+        else if (lowerMessage.includes('morning') || lowerMessage.includes('today')) {
+            const hour = new Date().getHours();
+            if (hour >= 5 && hour < 12) {
+                response = "Good morning! It's a perfect time to start with some cybersecurity basics. How about beginning with our Phishing Awareness module to kickstart your secure day?";
+            } else if (hour >= 12 && hour < 14) {
+                response = "Good day! Hope you're having a productive day. This is a great time for a quick cybersecurity refresher. What aspect would you like to focus on?";
+            } else if (hour >= 14 && hour < 18) {
+                response = "Good afternoon! As the day progresses, it's important to stay vigilant about online security. Would you like to learn about protecting against afternoon phishing attempts?";
+            } else if (hour >= 18 && hour < 22) {
+                response = "Good evening! Evening is a good time to reflect on your digital safety practices from today. What security topics are on your mind?";
+            } else {
+                response = "Good night! Even late hours require cybersecurity awareness, especially if you're browsing or working. Would you like some tips for safe nighttime computing?";
+            }
+        }
         // Feeling or emotional support
         else if (lowerMessage.includes('overwhelmed') || lowerMessage.includes('stress') || lowerMessage.includes('anxious')) {
-            response = "I understand that cybersecurity can feel overwhelming with all the threats out there. Remember that every small step you take makes you more secure. Start with the basics and build your knowledge gradually. You're doing great by taking the initiative to learn!";
+            response = `${currentGreeting}! I understand that cybersecurity can feel overwhelming with all the threats out there. Remember that every small step you take makes you more secure. Start with the basics and build your knowledge gradually. You're doing great by taking the initiative to learn!`;
         }
         // Default response
         else {
-            response = "Thanks for sharing that. ";
+            response = `${currentGreeting}! Thanks for sharing that. `;
             
             if (mentionedAreas.length > 0) {
                 response += `Based on your interest in ${mentionedAreas.join(' and ')}, `;
@@ -119,7 +137,7 @@ const api = {
                     social: 'Social Engineering'
                 };
                 
-                return `Based on your interests, I recommend the "${moduleTitles[interestModules[0]]}" module. It covers essential concepts that align with what you've been asking about. Would you like to start that module now?`;
+                return `${ui.getTimeBasedGreeting()}! Based on your interests, I recommend the "${moduleTitles[interestModules[0]]}" module. It covers essential concepts that align with what you've been asking about. Would you like to start that module now?`;
             }
         }
         
@@ -147,6 +165,6 @@ const api = {
             social: 'Social Engineering'
         };
         
-        return `Based on your current knowledge level, I recommend the "${moduleTitles[recommendedModule]}" module. It's designed to build on what you already know and introduce new concepts. Would you like to explore it?`;
+        return `${ui.getTimeBasedGreeting()}! Based on your current knowledge level, I recommend the "${moduleTitles[recommendedModule]}" module. It's designed to build on what you already know and introduce new concepts. Would you like to explore it?`;
     }
 };

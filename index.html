@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DefendIQ - Cybersecurity Training</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Landing Page -->
+    <section id="landingPage" class="landing-page">
+        <div class="logo">🛡️</div>
+        <h1 class="title">DefendIQ</h1>
+        <p class="slogan">Defend with Confidence, Grow with Ease!</p>
+        <div class="mode-buttons">
+            <button id="trainingBtn" class="btn btn-primary">
+                <span>📚</span> Training Mode
+            </button>
+            <button id="supportBtn" class="btn btn-secondary">
+                <span>💬</span> Support Mode
+            </button>
+        </div>
+    </section>
+
+    <!-- Training Mode -->
+    <section id="trainingMode" class="app-section">
+        <div class="nav-bar">
+            <div class="nav-brand">
+                <span>🛡️</span>
+                <span>DefendIQ</span>
+            </div>
+            <div class="nav-controls">
+                <button id="homeBtn" class="nav-btn">Home</button>
+                <button id="refreshBtn" class="nav-btn">Refresh</button>
+            </div>
+        </div>
+        
+        <div class="dashboard">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-label">Current Streak</div>
+                    <div class="stat-value" id="streakValue">5</div>
+                    <div class="stat-label">days</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Points Earned</div>
+                    <div class="stat-value" id="pointsValue">350</div>
+                    <div class="stat-label">points</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completion</div>
+                    <div class="stat-value" id="completionValue">42%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 42%;"></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Badges Earned</div>
+                    <div class="stat-value" id="badgesValue">3</div>
+                    <div class="stat-label">badges</div>
+                </div>
+            </div>
+            
+            <div class="module-selector">
+                <select id="moduleDropdown" class="module-dropdown">
+                    <option value="">Select a Module</option>
+                    <option value="phishing">Phishing Awareness</option>
+                    <option value="passwords">Password Security</option>
+                    <option value="malware">Malware Protection</option>
+                    <option value="social">Social Engineering</option>
+                </select>
+            </div>
+            
+            <div class="module-content" id="moduleContent" style="display: none;">
+                <div class="module-header">
+                    <h2 id="moduleTitle">Module Title</h2>
+                    <button id="closeModule" class="nav-btn">Close</button>
+                </div>
+                <div id="moduleBody">
+                    <!-- Module content will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support Mode -->
+    <section id="supportMode" class="app-section">
+        <div class="nav-bar">
+            <div class="nav-brand">
+                <span>🛡️</span>
+                <span>DefendIQ Support</span>
+            </div>
+            <div class="nav-controls">
+                <button id="homeBtn2" class="nav-btn">Home</button>
+                <button id="refreshBtn2" class="nav-btn">Refresh</button>
+            </div>
+        </div>
+        
+        <div class="support-container">
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message fade-in">
+                        <p>Hello! I'm your DefendIQ assistant. How can I help you with cybersecurity today?</p>
+                    </div>
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="chatInput" class="chat-input" placeholder="Ask about cybersecurity...">
+                    <button id="sendBtn" class="send-btn">Send</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Canvas Background -->
+    <div class="canvas-container">
+        <canvas id="backgroundCanvas"></canvas>
+    </div>
+
+    <script src="state.js"></script>
+    <script src="canvas.js"></script>
+    <script src="quiz.js"></script>
+    <script src="ui.js"></script>
+    <script src="api.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

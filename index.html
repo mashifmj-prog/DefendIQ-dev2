@@ -158,12 +158,37 @@
         <canvas id="backgroundCanvas"></canvas>
     </div>
 
-    <script src="state.js"></script>
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--background);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        color: var(--text);
+    ">
+        <div style="font-size: 3rem; margin-bottom: 20px;">🛡️</div>
+        <h2 style="margin-bottom: 10px;">DefendIQ Enterprise</h2>
+        <p>Loading application...</p>
+        <div style="margin-top: 20px; width: 200px; height: 4px; background: var(--surface); border-radius: 2px;">
+            <div id="loadingProgress" style="height: 100%; background: var(--primary); border-radius: 2px; width: 0%; transition: width 0.3s;"></div>
+        </div>
+    </div>
+
+    <!-- Scripts in correct order -->
+    <script src="debug.js"></script>
     <script src="departments.js"></script>
+    <script src="state.js"></script>
     <script src="canvas.js"></script>
     <script src="quiz.js"></script>
-    <script src="ui.js"></script>
     <script src="api.js"></script>
+    <script src="ui.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

@@ -16,30 +16,69 @@ const ui = {
 
     // Update support view
     updateSupportView() {
-        // Display greeting based on time of day
+        // Display greeting based on time of day with 5 periods
         const hour = new Date().getHours();
         let greeting = 'Hello';
         
-        if (hour < 12) greeting = 'Good morning';
-        else if (hour < 18) greeting = 'Good afternoon';
-        else greeting = 'Good evening';
+        if (hour >= 5 && hour < 12) {
+            greeting = 'Good morning';
+        } else if (hour >= 12 && hour < 14) {
+            greeting = 'Good day';
+        } else if (hour >= 14 && hour < 18) {
+            greeting = 'Good afternoon';
+        } else if (hour >= 18 && hour < 22) {
+            greeting = 'Good evening';
+        } else {
+            greeting = 'Good night';
+        }
         
         // Add personalized greeting if we have user data
         if (state.appState.userProfile.name !== 'User') {
             greeting += `, ${state.appState.userProfile.name}`;
         }
         
-        // Display motivational tip
-        const tips = [
-            "Cybersecurity is a journey, not a destination. Keep learning!",
-            "Regular training reduces security risks by up to 70%.",
-            "Strong passwords are your first line of defense.",
-            "Stay vigilant against social engineering attacks.",
-            "Update your software regularly to patch security vulnerabilities.",
-            "Backup your important data regularly to prevent data loss."
-        ];
+        // Display motivational tip based on time of day
+        const tips = {
+            morning: [
+                "Start your day with cybersecurity awareness!",
+                "Morning is a great time to learn something new about online safety.",
+                "Begin your day by checking your privacy settings.",
+                "A secure morning routine includes updating your passwords."
+            ],
+            day: [
+                "Stay vigilant during the day - most cyber attacks happen during working hours.",
+                "Take a cybersecurity break and review your online habits.",
+                "Daytime is perfect for quick security checkups.",
+                "Keep your digital defenses strong throughout the day."
+            ],
+            afternoon: [
+                "Afternoon is a good time to review your morning security practices.",
+                "Stay alert - afternoon fatigue can lead to security lapses.",
+                "Use your afternoon energy to tackle security challenges.",
+                "Review your daily online activities for security improvements."
+            ],
+            evening: [
+                "Evening is ideal for reflecting on your digital safety today.",
+                "Wind down by reviewing your cybersecurity practices.",
+                "Evening is a great time to plan tomorrow's security tasks.",
+                "Relax while staying aware of your digital footprint."
+            ],
+            night: [
+                "Even at night, stay aware of cybersecurity best practices.",
+                "Nighttime is perfect for running security scans and updates.",
+                "Rest well knowing you're building good security habits.",
+                "End your day with a quick security review."
+            ]
+        };
         
-        const randomTip = tips[Math.floor(Math.random() * tips.length)];
+        let timeCategory = 'day';
+        if (hour >= 5 && hour < 12) timeCategory = 'morning';
+        else if (hour >= 12 && hour < 14) timeCategory = 'day';
+        else if (hour >= 14 && hour < 18) timeCategory = 'afternoon';
+        else if (hour >= 18 && hour < 22) timeCategory = 'evening';
+        else timeCategory = 'night';
+        
+        const randomTip = tips[timeCategory][Math.floor(Math.random() * tips[timeCategory].length)];
         
         // Update chat with greeting and tip if no previous messages
         const chatMessages = document.getElementById('chatMessages');
@@ -114,5 +153,22 @@ const ui = {
         setTimeout(() => {
             notification.remove();
         }, 3000);
+    },
+
+    // Get current time-based greeting (for use in other parts of the app)
+    getTimeBasedGreeting() {
+        const hour = new Date().getHours();
+        
+        if (hour >= 5 && hour < 12) {
+            return 'Good morning';
+        } else if (hour >= 12 && hour < 14) {
+            return 'Good day';
+        } else if (hour >= 14 && hour < 18) {
+            return 'Good afternoon';
+        } else if (hour >= 18 && hour < 22) {
+            return 'Good evening';
+        } else {
+            return 'Good night';
+        }
     }
 };

@@ -3,113 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DefendIQ - Cybersecurity Training</title>
+    <title>DefendIQ Enterprise - Cybersecurity Learning Platform</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Landing Page -->
-    <section id="landingPage" class="landing-page">
-        <div class="logo">🛡️</div>
-        <h1 class="title">DefendIQ</h1>
-        <p class="slogan">Defend with Confidence, Grow with Ease!</p>
-        <div class="mode-buttons">
-            <button id="trainingBtn" class="btn btn-primary">
-                <span>📚</span> Training Mode
-            </button>
-            <button id="supportBtn" class="btn btn-secondary">
-                <span>💬</span> Support Mode
-            </button>
+    <!-- Department Selection Overlay -->
+    <div id="departmentSelection" class="overlay">
+        <div class="overlay-content">
+            <div class="logo">🛡️</div>
+            <h1>DefendIQ Enterprise</h1>
+            <p class="subtitle">Select Your Department</p>
+            <div class="department-cards">
+                <div class="department-card" data-department="nms">
+                    <div class="card-icon">🌐</div>
+                    <h3>NMS Command Center</h3>
+                    <p>Network Infrastructure Protection & Vendor Security</p>
+                    <div class="card-stats">
+                        <span>12 Modules</span>
+                        <span>Advanced</span>
+                    </div>
+                </div>
+                <div class="department-card" data-department="hr">
+                    <div class="card-icon">👥</div>
+                    <h3>HR Guardian Hub</h3>
+                    <p>Data Privacy, Compliance & Employee Protection</p>
+                    <div class="card-stats">
+                        <span>10 Modules</span>
+                        <span>Compliance</span>
+                    </div>
+                </div>
+                <div class="department-card" data-department="it">
+                    <div class="card-icon">💻</div>
+                    <h3>IT Cyber Station</h3>
+                    <p>System Defense & Incident Response</p>
+                    <div class="card-stats">
+                        <span>15 Modules</span>
+                        <span>Technical</span>
+                    </div>
+                </div>
+                <div class="department-card" data-department="executive">
+                    <div class="card-icon">📊</div>
+                    <h3>Executive Briefing</h3>
+                    <p>Security Overview & Department Analytics</p>
+                    <div class="card-stats">
+                        <span>Dashboard</span>
+                        <span>Management</span>
+                    </div>
+                </div>
+            </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Training Mode -->
-    <section id="trainingMode" class="app-section">
-        <div class="nav-bar">
+    <!-- Main App Container -->
+    <div id="appContainer" class="app-container" style="display: none;">
+        <!-- Navigation Bar -->
+        <nav class="nav-bar">
             <div class="nav-brand">
-                <span>🛡️</span>
-                <span>DefendIQ</span>
+                <span class="nav-logo">🛡️</span>
+                <span class="nav-title">DefendIQ</span>
+                <span class="department-badge" id="departmentBadge">Enterprise</span>
             </div>
             <div class="nav-controls">
+                <button id="departmentSwitch" class="nav-btn">Switch Dept</button>
                 <button id="homeBtn" class="nav-btn">Home</button>
                 <button id="refreshBtn" class="nav-btn">Refresh</button>
             </div>
-        </div>
-        
-        <div class="dashboard">
-            <div class="stats-container">
-                <div class="stat-card">
-                    <div class="stat-label">Current Streak</div>
-                    <div class="stat-value" id="streakValue">5</div>
-                    <div class="stat-label">days</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Points Earned</div>
-                    <div class="stat-value" id="pointsValue">350</div>
-                    <div class="stat-label">points</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Completion</div>
-                    <div class="stat-value" id="completionValue">42%</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 42%;"></div>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Badges Earned</div>
-                    <div class="stat-value" id="badgesValue">3</div>
-                    <div class="stat-label">badges</div>
-                </div>
-            </div>
-            
-            <div class="module-selector">
-                <select id="moduleDropdown" class="module-dropdown">
-                    <option value="">Select a Module</option>
-                    <option value="phishing">Phishing Awareness</option>
-                    <option value="passwords">Password Security</option>
-                    <option value="malware">Malware Protection</option>
-                    <option value="social">Social Engineering</option>
-                </select>
-            </div>
-            
-            <div class="module-content" id="moduleContent" style="display: none;">
-                <div class="module-header">
-                    <h2 id="moduleTitle">Module Title</h2>
-                    <button id="closeModule" class="nav-btn">Close</button>
-                </div>
-                <div id="moduleBody">
-                    <!-- Module content will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </section>
+        </nav>
 
-    <!-- Support Mode -->
-    <section id="supportMode" class="app-section">
-        <div class="nav-bar">
-            <div class="nav-brand">
-                <span>🛡️</span>
-                <span>DefendIQ Support</span>
-            </div>
-            <div class="nav-controls">
-                <button id="homeBtn2" class="nav-btn">Home</button>
-                <button id="refreshBtn2" class="nav-btn">Refresh</button>
-            </div>
-        </div>
-        
-        <div class="support-container">
-            <div class="chat-container">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message ai-message fade-in">
-                        <p>Hello! I'm your DefendIQ assistant. How can I help you with cybersecurity today?</p>
+        <!-- Training Mode -->
+        <section id="trainingMode" class="app-section">
+            <div class="dashboard">
+                <!-- Department Header -->
+                <div class="department-header" id="departmentHeader">
+                    <h1 id="deptTitle">Department Training Center</h1>
+                    <p id="deptDescription">Comprehensive cybersecurity training</p>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-label">Security Score</div>
+                        <div class="stat-value" id="securityScore">85</div>
+                        <div class="stat-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Modules Completed</div>
+                        <div class="stat-value" id="modulesCompleted">8/12</div>
+                        <div class="stat-label">Current Streak: <span id="streakValue">5</span> days</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Threats Detected</div>
+                        <div class="stat-value" id="threatsDetected">94%</div>
+                        <div class="stat-label">Phishing Accuracy</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Department Rank</div>
+                        <div class="stat-value" id="departmentRank">#2</div>
+                        <div class="stat-label">Among 3 departments</div>
                     </div>
                 </div>
-                <div class="chat-input-container">
-                    <input type="text" id="chatInput" class="chat-input" placeholder="Ask about cybersecurity...">
-                    <button id="sendBtn" class="send-btn">Send</button>
+
+                <!-- Module Grid -->
+                <div class="module-grid" id="moduleGrid">
+                    <!-- Modules will be dynamically loaded here -->
+                </div>
+
+                <!-- Module Content -->
+                <div class="module-content" id="moduleContent" style="display: none;">
+                    <div class="module-header">
+                        <h2 id="moduleTitle">Module Title</h2>
+                        <button id="closeModule" class="nav-btn">Back to Modules</button>
+                    </div>
+                    <div id="moduleBody">
+                        <!-- Module content will be loaded here -->
+                    </div>
                 </div>
             </div>
+        </section>
+
+        <!-- Support Mode -->
+        <section id="supportMode" class="app-section" style="display: none;">
+            <div class="support-container">
+                <div class="support-header">
+                    <h2 id="supportTitle">Cybersecurity Support</h2>
+                    <p id="supportSubtitle">Your AI Security Assistant</p>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai-message fade-in">
+                            <p>Hello! I'm your DefendIQ security assistant. How can I help you with cybersecurity today?</p>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" class="chat-input" placeholder="Ask about cybersecurity, threats, or best practices...">
+                        <button id="sendBtn" class="send-btn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mode Selector -->
+        <div class="mode-selector">
+            <button id="trainingTab" class="mode-tab active">Training</button>
+            <button id="supportTab" class="mode-tab">Support</button>
         </div>
-    </section>
+    </div>
 
     <!-- Canvas Background -->
     <div class="canvas-container">
@@ -117,6 +159,7 @@
     </div>
 
     <script src="state.js"></script>
+    <script src="departments.js"></script>
     <script src="canvas.js"></script>
     <script src="quiz.js"></script>
     <script src="ui.js"></script>

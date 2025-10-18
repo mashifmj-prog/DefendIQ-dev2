@@ -362,3 +362,63 @@ const departmentAI = {
             'data breach': "HR plays a critical role in data breach response and employee notification.",
             'recruitment': "Secure recruitment processes prevent social engineering and identity fraud."
         }
+    },
+    it: {
+        greetings: [
+            "Welcome to IT Cyber Station! Let's fortify our digital defenses.",
+            "Hello Security Engineer! Ready to master system protection?",
+            "Greetings! Protecting our systems requires constant vigilance and expertise."
+        ],
+        expertise: [
+            "system security",
+            "access control",
+            "incident response",
+            "security tools",
+            "threat detection"
+        ],
+        responses: {
+            'privilege escalation': "Implement strict access controls and monitor for unusual privilege elevation attempts.",
+            'security tools': "Proper configuration and monitoring of security tools is essential for threat detection.",
+            'incident response': "IT teams must lead coordinated incident response with clear communication channels."
+        }
+    }
+};
+
+// Department-specific progress tracking
+function getDepartmentProgress(departmentId) {
+    const progress = state.getDepartmentState(departmentId);
+    const totalModules = departments[departmentId].modules.length;
+    const completedModules = progress.modules.filter(m => m.completed).length;
+    
+    return {
+        completion: totalModules > 0 ? Math.round((completedModules / totalModules) * 100) : 0,
+        completedModules,
+        totalModules,
+        securityScore: calculateSecurityScore(progress),
+        lastActivity: progress.lastActivity
+    };
+}
+
+function calculateSecurityScore(progress) {
+    let score = 0;
+    const completedModules = progress.modules.filter(m => m.completed);
+    
+    if (completedModules.length > 0) {
+        // Base score from completion
+        score += (completedModules.length / progress.modules.length) * 60;
+        
+        // Add points for quiz performance
+        const quizPerformance = completedModules.reduce((acc, module) => {
+            return acc + (module.quizScore || 0);
+        }, 0) / completedModules.length;
+        
+        score += (quizPerformance / 100) * 40;
+    }
+    
+    return Math.min(Math.round(score), 100);
+}
+
+// Export for use in other files
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { departments, departmentAI, getDepartmentProgress, calculateSecurityScore };
+}

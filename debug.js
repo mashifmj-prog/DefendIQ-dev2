@@ -1,12 +1,13 @@
 // debug.js - Enhanced error handling and debugging
 const debug = {
     enabled: true,
-    logLevel: 'verbose', // 'verbose', 'info', 'warn', 'error'
+    logLevel: 'verbose',
 
     init() {
         this.setupErrorHandling();
         this.checkDependencies();
         this.log('Debug system initialized', 'info');
+        this.updateLoadingProgress(20);
     },
 
     setupErrorHandling() {
@@ -19,13 +20,6 @@ const debug = {
         window.addEventListener('unhandledrejection', (event) => {
             this.handleError('Unhandled Promise Rejection', event.reason, event);
         });
-
-        // Console error wrapper
-        const originalConsoleError = console.error;
-        console.error = (...args) => {
-            this.handleError('Console Error', args.join(' '));
-            originalConsoleError.apply(console, args);
-        };
     },
 
     handleError(type, error, event = null) {
@@ -36,8 +30,7 @@ const debug = {
             timestamp: new Date().toISOString(),
             url: window.location.href,
             userAgent: navigator.userAgent,
-            department: state?.appState?.currentDepartment || 'none',
-            state: this.getSafeStateSnapshot()
+            department: window.state?.appState?.currentDepartment || 'none'
         };
 
         this.log(`❌ ${type}: ${errorInfo.message}`, 'error');
@@ -49,24 +42,10 @@ const debug = {
         this.showUserMessage(errorInfo);
     },
 
-    getSafeStateSnapshot() {
-        try {
-            return {
-                currentDepartment: state?.appState?.currentDepartment,
-                currentMode: state?.appState?.currentMode,
-                modulesLoaded: document.querySelectorAll('.module-card').length,
-                departmentSelected: !!state?.appState?.currentDepartment
-            };
-        } catch (e) {
-            return { error: 'Could not get state snapshot' };
-        }
-    },
-
     storeError(errorInfo) {
         try {
             const errors = JSON.parse(localStorage.getItem('defendiq_errors') || '[]');
             errors.push(errorInfo);
-            // Keep only last 10 errors
             if (errors.length > 10) errors.shift();
             localStorage.setItem('defendiq_errors', JSON.stringify(errors));
         } catch (e) {
@@ -84,17 +63,11 @@ const debug = {
             api: typeof api !== 'undefined'
         };
 
-        const missing = Object.entries(dependencies).filter(([_, exists]) => !exists);
-        
-        if (missing.length > 0) {
-            this.handleError('Missing Dependencies', `Missing: ${missing.map(([name]) => name).join(', ')}`);
-        }
-
         this.log('Dependencies check:', 'info', dependencies);
+        this.updateLoadingProgress(40);
     },
 
     showUserMessage(errorInfo) {
-        // Create a more helpful error message
         const message = this.getUserFriendlyMessage(errorInfo);
         
         // Use existing UI notification if available
@@ -109,9 +82,8 @@ const debug = {
     getUserFriendlyMessage(errorInfo) {
         const message = errorInfo.message?.toString() || 'Unknown error';
         
-        // Common error patterns and their user-friendly messages
         if (message.includes('state is not defined')) {
-            return 'Application configuration loading. Please refresh the page.';
+            return 'Application configuration loading. Please wait...';
         }
         if (message.includes('department') && message.includes('undefined')) {
             return 'Please select a department first.';
@@ -123,10 +95,15 @@ const debug = {
             return 'Browser storage issue. Please check your browser settings.';
         }
         
-        return 'An unexpected error occurred. Our team has been notified.';
+        return 'Application loading. Please wait a moment...';
     },
 
     showFallbackNotification(message) {
+        // Only show if not already showing loading indicator
+        if (document.getElementById('loadingIndicator').style.display !== 'none') {
+            return;
+        }
+
         const notification = document.createElement('div');
         notification.style.cssText = `
             position: fixed;
@@ -141,7 +118,7 @@ const debug = {
             box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         `;
         notification.innerHTML = `
-            <div style="font-weight: bold; margin-bottom: 5px;">⚠️ Error</div>
+            <div style="font-weight: bold; margin-bottom: 5px;">⚠️ Loading</div>
             <div style="font-size: 14px;">${message}</div>
             <button onclick="this.parentElement.remove()" style="
                 background: none;
@@ -159,9 +136,6 @@ const debug = {
     log(message, level = 'info', data = null) {
         if (!this.enabled) return;
         
-        const shouldLog = this.shouldLogLevel(level);
-        if (!shouldLog) return;
-
         const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
         const prefix = `[${timestamp}] ${level.toUpperCase()}:`;
         
@@ -172,38 +146,20 @@ const debug = {
         }
     },
 
-    shouldLogLevel(level) {
-        const levels = { verbose: 0, info: 1, warn: 2, error: 3 };
-        const currentLevel = levels[this.logLevel] || 1;
-        const messageLevel = levels[level] || 1;
-        return messageLevel >= currentLevel;
-    },
-
-    // Debug methods for testing
-    testErrorHandling() {
-        this.log('Testing error handling...', 'info');
-        
-        // Test different error types
-        setTimeout(() => {
-            try {
-                // This will trigger the error handler
-                undefinedFunction();
-            } catch (e) {
-                this.handleError('Test Error', e);
-            }
-        }, 1000);
-    },
-
-    getStoredErrors() {
-        try {
-            return JSON.parse(localStorage.getItem('defendiq_errors') || '[]');
-        } catch (e) {
-            return [];
+    updateLoadingProgress(percent) {
+        const progressBar = document.getElementById('loadingProgress');
+        if (progressBar) {
+            progressBar.style.width = percent + '%';
         }
     },
 
-    clearStoredErrors() {
-        localStorage.removeItem('defendiq_errors');
-        this.log('Stored errors cleared', 'info');
+    hideLoadingIndicator() {
+        const indicator = document.getElementById('loadingIndicator');
+        if (indicator) {
+            indicator.style.display = 'none';
+        }
     }
 };
+
+// Initialize debug immediately
+debug.init();

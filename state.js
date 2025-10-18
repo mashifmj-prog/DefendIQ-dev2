@@ -1,86 +1,10 @@
 // Enhanced state management for enterprise features
 const state = {
-    appState: {
-        currentDepartment: null,
-        currentMode: 'training',
-        userProfile: {
-            name: '',
-            employeeId: '',
-            department: '',
-            role: '',
-            knowledgeLevel: 'beginner',
-            learningStyle: 'visual',
-            riskProfile: 'medium'
-        },
-        departmentProgress: {
-            nms: this.createDepartmentState('nms'),
-            hr: this.createDepartmentState('hr'),
-            it: this.createDepartmentState('it')
-        },
-        chatHistory: [],
-        preferences: {
-            theme: 'dark',
-            notifications: true,
-            language: 'en'
-        },
-        lastActivity: new Date().toISOString()
-    },
+    appState: null,
 
-    // Initialize department state
-    createDepartmentState(departmentId) {
-        const deptModules = departments[departmentId].modules;
+    // Initialize default state structure
+    getDefaultState() {
         return {
-            departmentId: departmentId,
-            modules: deptModules.map(module => ({
-                id: module.id,
-                completed: false,
-                progress: 0,
-                quizScore: 0,
-                lastAttempt: null,
-                timeSpent: 0
-            })),
-            overallScore: 0,
-            completedModules: 0,
-            totalTimeSpent: 0,
-            lastActivity: null,
-            certificates: []
-        };
-    },
-
-    // Load state from localStorage
-    loadState() {
-        try {
-            const savedState = localStorage.getItem('defendIQEnterprise');
-            if (savedState) {
-                const parsed = JSON.parse(savedState);
-                this.appState = { ...this.appState, ...parsed };
-                
-                // Ensure all departments have state
-                ['nms', 'hr', 'it'].forEach(dept => {
-                    if (!this.appState.departmentProgress[dept]) {
-                        this.appState.departmentProgress[dept] = this.createDepartmentState(dept);
-                    }
-                });
-            }
-        } catch (error) {
-            console.error('Error loading state:', error);
-            this.initializeDefaultState();
-        }
-    },
-
-    // Save state to localStorage
-    saveState() {
-        try {
-            this.appState.lastActivity = new Date().toISOString();
-            localStorage.setItem('defendIQEnterprise', JSON.stringify(this.appState));
-        } catch (error) {
-            console.error('Error saving state:', error);
-        }
-    },
-
-    // Initialize default state
-    initializeDefaultState() {
-        this.appState = {
             currentDepartment: null,
             currentMode: 'training',
             userProfile: {
@@ -107,23 +31,102 @@ const state = {
         };
     },
 
+    // Initialize department state
+    createDepartmentState(departmentId) {
+        // Safe check for departments object
+        const deptModules = (window.departments && window.departments[departmentId] && window.departments[departmentId].modules) || [];
+        
+        return {
+            departmentId: departmentId,
+            modules: deptModules.map(module => ({
+                id: module.id,
+                completed: false,
+                progress: 0,
+                quizScore: 0,
+                lastAttempt: null,
+                timeSpent: 0
+            })),
+            overallScore: 0,
+            completedModules: 0,
+            totalTimeSpent: 0,
+            lastActivity: null,
+            certificates: []
+        };
+    },
+
+    // Load state from localStorage
+    loadState() {
+        try {
+            debug.log('Loading application state...', 'info');
+            const savedState = localStorage.getItem('defendIQEnterprise');
+            
+            if (savedState) {
+                const parsed = JSON.parse(savedState);
+                this.appState = { ...this.getDefaultState(), ...parsed };
+                debug.log('State loaded successfully', 'info');
+            } else {
+                this.appState = this.getDefaultState();
+                debug.log('No saved state found, using defaults', 'info');
+            }
+            
+            // Ensure all departments have state
+            ['nms', 'hr', 'it'].forEach(dept => {
+                if (!this.appState.departmentProgress[dept]) {
+                    this.appState.departmentProgress[dept] = this.createDepartmentState(dept);
+                }
+            });
+
+            debug.updateLoadingProgress(60);
+            
+        } catch (error) {
+            debug.log('Error loading state, using defaults', 'error', error);
+            this.appState = this.getDefaultState();
+            this.saveState();
+        }
+    },
+
+    // Save state to localStorage
+    saveState() {
+        if (!this.appState) {
+            debug.log('Cannot save: appState not initialized', 'warn');
+            return;
+        }
+
+        try {
+            this.appState.lastActivity = new Date().toISOString();
+            localStorage.setItem('defendIQEnterprise', JSON.stringify(this.appState));
+        } catch (error) {
+            debug.log('Error saving state', 'error', error);
+        }
+    },
+
     // Department management
     setCurrentDepartment(departmentId) {
+        if (!this.appState) {
+            debug.log('appState not initialized', 'warn');
+            return;
+        }
+        
         this.appState.currentDepartment = departmentId;
         this.appState.userProfile.department = departmentId;
         this.saveState();
     },
 
     getCurrentDepartment() {
-        return this.appState.currentDepartment;
+        return this.appState?.currentDepartment || null;
     },
 
     getDepartmentState(departmentId) {
+        if (!this.appState?.departmentProgress) {
+            return this.createDepartmentState(departmentId);
+        }
         return this.appState.departmentProgress[departmentId] || this.createDepartmentState(departmentId);
     },
 
     // Module progress tracking
     updateModuleProgress(departmentId, moduleId, progress) {
+        if (!this.appState) return;
+
         const deptState = this.getDepartmentState(departmentId);
         const module = deptState.modules.find(m => m.id === moduleId);
         
@@ -142,6 +145,8 @@ const state = {
 
     // Quiz results
     recordQuizResult(departmentId, moduleId, score, timeSpent) {
+        if (!this.appState) return;
+
         const deptState = this.getDepartmentState(departmentId);
         const module = deptState.modules.find(m => m.id === moduleId);
         
@@ -151,7 +156,6 @@ const state = {
             module.lastAttempt = new Date().toISOString();
             deptState.totalTimeSpent += timeSpent;
             
-            // Auto-complete if score is high enough
             if (score >= 80 && !module.completed) {
                 module.completed = true;
                 module.progress = 100;
@@ -166,6 +170,8 @@ const state = {
 
     // Overall department score
     updateOverallScore(departmentId) {
+        if (!this.appState) return;
+
         const deptState = this.getDepartmentState(departmentId);
         const completedModules = deptState.modules.filter(m => m.completed);
         
@@ -179,10 +185,12 @@ const state = {
 
     // Certificate generation
     generateCertificate(departmentId, moduleId) {
+        if (!this.appState) return null;
+
         const deptState = this.getDepartmentState(departmentId);
         const module = deptState.modules.find(m => m.id === moduleId);
-        const department = departments[departmentId];
-        const moduleInfo = department.modules.find(m => m.id === moduleId);
+        const department = window.departments?.[departmentId];
+        const moduleInfo = department?.modules?.find(m => m.id === moduleId);
         
         if (module && moduleInfo) {
             const certificate = {
@@ -210,12 +218,16 @@ const state = {
 
     // User profile management
     updateUserProfile(profileData) {
+        if (!this.appState) return;
+        
         this.appState.userProfile = { ...this.appState.userProfile, ...profileData };
         this.saveState();
     },
 
     // Chat history
     addChatMessage(sender, message, departmentId = null) {
+        if (!this.appState) return null;
+
         const chatMessage = {
             id: Date.now().toString(),
             sender: sender,
@@ -226,7 +238,6 @@ const state = {
         
         this.appState.chatHistory.push(chatMessage);
         
-        // Keep only last 100 messages
         if (this.appState.chatHistory.length > 100) {
             this.appState.chatHistory = this.appState.chatHistory.slice(-100);
         }
@@ -237,20 +248,22 @@ const state = {
 
     // Get department statistics for executive view
     getDepartmentStatistics() {
+        if (!this.appState) return {};
+        
         const stats = {};
         
         ['nms', 'hr', 'it'].forEach(deptId => {
             const deptState = this.getDepartmentState(deptId);
-            const department = departments[deptId];
+            const department = window.departments?.[deptId];
             
             stats[deptId] = {
-                name: department.name,
-                totalModules: department.modules.length,
+                name: department?.name || deptId,
+                totalModules: department?.modules?.length || 0,
                 completedModules: deptState.completedModules,
                 overallScore: deptState.overallScore,
                 totalTimeSpent: deptState.totalTimeSpent,
                 lastActivity: deptState.lastActivity,
-                completionRate: department.modules.length > 0 ? 
+                completionRate: department?.modules?.length > 0 ? 
                     Math.round((deptState.completedModules / department.modules.length) * 100) : 0
             };
         });
@@ -258,33 +271,10 @@ const state = {
         return stats;
     },
 
-    // Get overall organizational metrics
-    getOrganizationalMetrics() {
-        const deptStats = this.getDepartmentStatistics();
-        let totalModules = 0;
-        let totalCompleted = 0;
-        let totalScore = 0;
-        let activeDepartments = 0;
-        
-        Object.values(deptStats).forEach(stat => {
-            totalModules += stat.totalModules;
-            totalCompleted += stat.completedModules;
-            totalScore += stat.overallScore;
-            if (stat.completedModules > 0) activeDepartments++;
-        });
-        
-        return {
-            totalEmployees: 1, // In single-user mode, this would be 1
-            totalModules: totalModules,
-            completedModules: totalCompleted,
-            overallCompletionRate: totalModules > 0 ? Math.round((totalCompleted / totalModules) * 100) : 0,
-            averageScore: activeDepartments > 0 ? Math.round(totalScore / activeDepartments) : 0,
-            totalTrainingHours: Math.round(Object.values(deptStats).reduce((sum, stat) => sum + stat.totalTimeSpent, 0) / 3600000)
-        };
-    },
-
     // Reset progress (for testing)
     resetProgress() {
+        if (!this.appState) return;
+        
         this.appState.departmentProgress = {
             nms: this.createDepartmentState('nms'),
             hr: this.createDepartmentState('hr'),
@@ -295,4 +285,6 @@ const state = {
 };
 
 // Initialize state when script loads
-state.loadState();
+if (typeof debug !== 'undefined') {
+    debug.log('State module loaded', 'info');
+}

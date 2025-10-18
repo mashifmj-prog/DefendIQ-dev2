@@ -1,0 +1,133 @@
+{
+  "departments": {
+    "nms": {
+      "name": "NMS Command Center",
+      "modules": [
+        {
+          "id": "nms-1",
+          "title": "Network Infrastructure Security",
+          "description": "Protecting network systems from social engineering attacks",
+          "difficulty": "Advanced",
+          "objectives": [
+            "Identify social engineering tactics targeting NMS teams",
+            "Implement secure network change procedures",
+            "Protect network configuration data",
+            "Establish vendor security protocols"
+          ],
+          "content": {
+            "materials": [
+              {
+                "title": "Understanding NMS Vulnerabilities",
+                "content": "Network Management Systems are prime targets for attackers seeking infrastructure access through social engineering."
+              },
+              {
+                "title": "Social Engineering Defense",
+                "content": "Learn to recognize sophisticated social engineering attempts targeting network teams, including vendor impersonation and emergency scenario manipulation."
+              }
+            ],
+            "quiz": [
+              {
+                "question": "A vendor emails requesting emergency network configuration changes. What should you do first?",
+                "options": [
+                  "Implement the changes immediately",
+                  "Verify the request through established secure channels",
+                  "Forward to your manager",
+                  "Ignore the request"
+                ],
+                "correct": 1,
+                "explanation": "Always verify emergency requests through established secure communication channels before implementation to prevent social engineering attacks."
+              },
+              {
+                "question": "What is the primary social engineering risk for NMS teams?",
+                "options": [
+                  "Phishing for personal information",
+                  "Unauthorized network configuration changes",
+                  "Password theft for social media",
+                  "Credit card fraud"
+                ],
+                "correct": 1,
+                "explanation": "Attackers target NMS teams specifically to gain unauthorized access to network configurations and infrastructure."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "hr": {
+      "name": "HR Guardian Hub", 
+      "modules": [
+        {
+          "id": "hr-1",
+          "title": "Employee Data Protection",
+          "description": "Safeguarding sensitive employee information and POPIA compliance",
+          "difficulty": "Intermediate", 
+          "objectives": [
+            "Understand POPIA requirements",
+            "Implement secure data handling",
+            "Protect employee privacy", 
+            "Establish access controls"
+          ],
+          "content": {
+            "materials": [
+              {
+                "title": "POPIA Compliance Essentials",
+                "content": "Understanding the Protection of Personal Information Act requirements for employee data handling and protection."
+              }
+            ],
+            "quiz": [
+              {
+                "question": "Under POPIA, employee consent for data processing must be:",
+                "options": [
+                  "Optional",
+                  "Implied", 
+                  "Specific and informed",
+                  "Verbal only"
+                ],
+                "correct": 2,
+                "explanation": "POPIA requires specific, informed consent for personal data processing - it cannot be implied or assumed."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "it": {
+      "name": "IT Cyber Station",
+      "modules": [
+        {
+          "id": "it-1", 
+          "title": "Privilege Access Management",
+          "description": "Managing administrative access and preventing privilege escalation",
+          "difficulty": "Advanced",
+          "objectives": [
+            "Implement least privilege principle", 
+            "Monitor administrative access",
+            "Prevent privilege escalation",
+            "Manage service accounts"
+          ],
+          "content": {
+            "materials": [
+              {
+                "title": "Principle of Least Privilege",
+                "content": "Granting only the minimum access necessary for job functions to reduce attack surface and prevent privilege escalation."
+              }
+            ],
+            "quiz": [
+              {
+                "question": "The principle of least privilege means:",
+                "options": [
+                  "Grant all access by default",
+                  "Grant minimum necessary access", 
+                  "No access for anyone",
+                  "Access based on seniority"
+                ],
+                "correct": 1,
+                "explanation": "Users should have only the access necessary to perform their job functions, reducing potential damage from compromised accounts."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

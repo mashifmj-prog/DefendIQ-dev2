@@ -235,4 +235,19 @@ const api = {
         });
         
         // If no topic-based recommendations, suggest based on knowledge level
-        if (recommendations.length === 
+        if (recommendations.length === 0) {
+            const difficulty = knowledgeAssessment.knowledgeLevel === 'beginner' ? 'Beginner' : 
+                             knowledgeAssessment.knowledgeLevel === 'intermediate' ? 'Intermediate' : 'Advanced';
+            
+            recommendations = department.modules.filter(module => 
+                module.difficulty === difficulty && 
+                !deptState.modules.find(m => m.id === module.id && m.completed)
+            );
+        }
+        
+        // Remove duplicates and limit to 3 recommendations
+        recommendations = [...new Set(recommendations)].slice(0, 3);
+        
+        return recommendations;
+    }
+};
